@@ -52,45 +52,57 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: bulk-processor-windows
-        path: |
-          dist/bulk_processor.exe
-          dist/*.txt
+        path: dist/bulk_processor.exe
+        if-no-files-found: error
     
     - name: Upload artifact (macOS)
       if: matrix.os == 'macos-latest'
       uses: actions/upload-artifact@v4
       with:
         name: bulk-processor-macos
-        path: |
-          dist/bulk_processor.app
-          dist/*.txt
+        path: dist/bulk_processor.app
+        if-no-files-found: error
     
     - name: Upload artifact (Linux)
       if: matrix.os == 'ubuntu-latest'
       uses: actions/upload-artifact@v4
       with:
         name: bulk-processor-linux
-        path: |
-          dist/bulk_processor
-          dist/*.txt
+        path: dist/bulk_processor
+        if-no-files-found: error
     
   release:
     needs: build
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
-    - name: Download all artifacts
+    - name: Download Windows artifact
       uses: actions/download-artifact@v4
+      with:
+        name: bulk-processor-windows
+        path: ./windows
+    
+    - name: Download macOS artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: bulk-processor-macos
+        path: ./macos
+    
+    - name: Download Linux artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: bulk-processor-linux
+        path: ./linux
     
     - name: List downloaded artifacts
       run: ls -la
-    
+      
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          bulk-processor-windows/*
-          bulk-processor-macos/*
-          bulk-processor-linux/*
+          windows/bulk_processor.exe
+          macos/bulk_processor.app
+          linux/bulk_processor
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
