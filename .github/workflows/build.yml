@@ -32,7 +32,13 @@ jobs:
         pip install pyinstaller
     
     - name: List files (debug)
-      run: ls -la
+      run: |
+        if [ "$RUNNER_OS" = "Windows" ]; then
+          dir
+        else
+          ls -la
+        fi
+      shell: bash
     
     - name: Build with PyInstaller (Windows)
       if: matrix.os == 'windows-latest'
@@ -47,7 +53,13 @@ jobs:
       run: pyinstaller build.spec
     
     - name: List dist directory (debug)
-      run: ls -la dist/
+      run: |
+        if [ "$RUNNER_OS" = "Windows" ]; then
+          dir dist
+        else
+          ls -la dist/
+        fi
+      shell: bash
     
     - name: Upload artifact (Windows)
       if: matrix.os == 'windows-latest'
