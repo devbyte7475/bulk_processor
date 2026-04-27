@@ -66,7 +66,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: bulk-processor-windows
-        path: dist/bulk_processor.exe
+        path: dist/bulk_processor/
         if-no-files-found: error
     
     - name: Upload artifact (macOS)
@@ -82,7 +82,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: bulk-processor-linux
-        path: dist/bulk_processor
+        path: dist/bulk_processor/
         if-no-files-found: error
     
   release:
@@ -111,12 +111,18 @@ jobs:
     - name: List downloaded artifacts
       run: ls -la
       
+    - name: Create ZIP archives
+      run: |
+        cd windows && zip -r ../bulk_processor_windows.zip . && cd ..
+        cd macos && zip -r ../bulk_processor_macos.zip bulk_processor.app && cd ..
+        cd linux && zip -r ../bulk_processor_linux.zip . && cd ..
+      
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          windows/bulk_processor.exe
-          macos/bulk_processor.app
-          linux/bulk_processor
+          bulk_processor_windows.zip
+          bulk_processor_macos.zip
+          bulk_processor_linux.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
