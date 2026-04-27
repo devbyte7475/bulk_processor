@@ -596,8 +596,15 @@ class BulkProcessorGUI:
         )
         self.progress_bar.pack(fill='x', pady=(0, 15))
         
-        self.log_viewer = RealTimeLogViewer(progress_frame, height=6)
-        self.log_viewer.frame.pack(fill='x')
+        log_label = ttk.Label(
+            progress_frame,
+            text="实时处理日志",
+            style='Body.TLabel'
+        )
+        log_label.pack(anchor='w', pady=(0, 8))
+        
+        self.log_viewer = RealTimeLogViewer(progress_frame, height=12)
+        self.log_viewer.frame.pack(fill='both', expand=True)
     
     def _create_results_section(self, parent):
         """创建结果预览区域"""
@@ -638,29 +645,43 @@ class BulkProcessorGUI:
     def _create_action_buttons(self, parent):
         """创建操作按钮"""
         buttons_frame = ttk.Frame(parent, style='TFrame')
-        buttons_frame.pack(fill='x')
+        buttons_frame.pack(fill='x', pady=(10, 0))
         
-        self.start_button = ttk.Button(
-            buttons_frame,
-            text="开始处理",
-            style='Primary.TButton',
+        start_frame = ttk.Frame(buttons_frame, style='TFrame')
+        start_frame.pack(side='left', fill='x', expand=True)
+        
+        self.start_button = tk.Button(
+            start_frame,
+            text="▶  开始处理数据",
+            font=('SF Pro Display', 14, 'bold'),
+            bg=ThemeColors.ACCENT,
+            fg='white',
+            activebackground=ThemeColors.ACCENT_HOVER,
+            activeforeground='white',
+            relief='flat',
+            cursor='hand2',
+            padx=40,
+            pady=15,
             command=self._start_processing
         )
-        self.start_button.pack(side='left', padx=(0, 12))
+        self.start_button.pack(side='left')
+        
+        secondary_frame = ttk.Frame(buttons_frame, style='TFrame')
+        secondary_frame.pack(side='right')
         
         ttk.Button(
-            buttons_frame,
+            secondary_frame,
             text="打开输出文件夹",
             style='Secondary.TButton',
             command=self._open_output_folder
         ).pack(side='left', padx=(0, 12))
         
         ttk.Button(
-            buttons_frame,
+            secondary_frame,
             text="关闭",
             style='Secondary.TButton',
             command=self.root.quit
-        ).pack(side='right')
+        ).pack(side='left')
     
     def _select_folder(self):
         """选择文件夹"""
@@ -727,7 +748,7 @@ class BulkProcessorGUI:
             return
         
         self.is_processing = True
-        self.start_button.configure(state='disabled')
+        self.start_button.config(state='disabled', bg=ThemeColors.TEXT_TERTIARY)
         
         self.progress_indicator.start_animation()
         
@@ -761,20 +782,30 @@ class BulkProcessorGUI:
                     
                     if "处理完成" in message:
                         self.root.after(0, lambda: self.log_viewer.add_log(message, 'success'))
+                    elif "加载" in message:
+                        self.root.after(0, lambda: self.log_viewer.add_log(message, 'info'))
                     else:
                         self.root.after(0, lambda: self.log_viewer.add_log(message, 'info'))
+                else:
+                    self.root.after(0, lambda: self.log_viewer.add_log(message, 'info'))
             
             results = self.processor.process(progress_callback=progress_callback)
             
             self._show_results(results)
             
+            self.root.after(0, lambda: self.log_viewer.add_log("=" * 50, 'info'))
+            self.root.after(0, lambda: self.log_viewer.add_log("✓ 数据处理完成！", 'success'))
             self.root.after(0, lambda: messagebox.showinfo("成功", "数据处理完成!"))
         except Exception as e:
+            import traceback
+            error_detail = traceback.format_exc()
             self.root.after(0, lambda: messagebox.showerror("错误", f"处理失败: {str(e)}"))
-            self.root.after(0, lambda: self.log_viewer.add_log(f"处理失败: {str(e)}", 'error'))
+            self.root.after(0, lambda: self.log_viewer.add_log("=" * 50, 'error'))
+            self.root.after(0, lambda: self.log_viewer.add_log(f"✗ 处理失败: {str(e)}", 'error'))
+            self.root.after(0, lambda: self.log_viewer.add_log(error_detail, 'error'))
         finally:
             self.is_processing = False
-            self.root.after(0, lambda: self.start_button.configure(state='normal'))
+            self.root.after(0, lambda: self.start_button.config(state='normal', bg=ThemeColors.ACCENT))
             self.root.after(0, lambda: self.progress_indicator.stop_animation())
     
     def _update_progress(self, message: str):
