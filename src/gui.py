@@ -396,7 +396,7 @@ class BulkProcessorGUI:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("亚马逊广告数据处理器")
-        self.root.geometry("900x750")
+        self.root.geometry("900x850")
         self.root.configure(bg=ThemeColors.BG_PRIMARY)
         self.root.resizable(True, True)
         
@@ -645,29 +645,26 @@ class BulkProcessorGUI:
     def _create_action_buttons(self, parent):
         """创建操作按钮"""
         buttons_frame = ttk.Frame(parent, style='TFrame')
-        buttons_frame.pack(fill='x', pady=(10, 0))
-        
-        start_frame = ttk.Frame(buttons_frame, style='TFrame')
-        start_frame.pack(side='left', fill='x', expand=True)
+        buttons_frame.pack(fill='x', pady=(20, 0))
         
         self.start_button = tk.Button(
-            start_frame,
+            buttons_frame,
             text="▶  开始处理数据",
-            font=('SF Pro Display', 14, 'bold'),
+            font=('SF Pro Display', 16, 'bold'),
             bg=ThemeColors.ACCENT,
             fg='white',
             activebackground=ThemeColors.ACCENT_HOVER,
             activeforeground='white',
             relief='flat',
             cursor='hand2',
-            padx=40,
-            pady=15,
+            padx=50,
+            pady=18,
             command=self._start_processing
         )
-        self.start_button.pack(side='left')
+        self.start_button.pack(fill='x', pady=(0, 15))
         
         secondary_frame = ttk.Frame(buttons_frame, style='TFrame')
-        secondary_frame.pack(side='right')
+        secondary_frame.pack(fill='x')
         
         ttk.Button(
             secondary_frame,
