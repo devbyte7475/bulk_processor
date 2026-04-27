@@ -78,6 +78,20 @@ class ModernStyle:
                        foreground=ThemeColors.TEXT_PRIMARY,
                        font=('SF Pro Text', 12))
         
+        style.configure('Start.TButton',
+                       background=ThemeColors.ACCENT,
+                       foreground='white',
+                       font=('SF Pro Display', 16, 'bold'),
+                       padding=(50, 18),
+                       borderwidth=0,
+                       focuscolor='none')
+        
+        style.map('Start.TButton',
+                 background=[('active', ThemeColors.ACCENT_HOVER),
+                           ('disabled', ThemeColors.TEXT_TERTIARY)],
+                 foreground=[('active', 'white'),
+                           ('disabled', 'white')])
+        
         style.configure('Primary.TButton',
                        background=ThemeColors.ACCENT,
                        foreground=ThemeColors.BG_PRIMARY,
@@ -396,7 +410,7 @@ class BulkProcessorGUI:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("亚马逊广告数据处理器")
-        self.root.geometry("900x850")
+        self.root.geometry("900x900")
         self.root.configure(bg=ThemeColors.BG_PRIMARY)
         self.root.resizable(True, True)
         
@@ -647,18 +661,10 @@ class BulkProcessorGUI:
         buttons_frame = ttk.Frame(parent, style='TFrame')
         buttons_frame.pack(fill='x', pady=(20, 0))
         
-        self.start_button = tk.Button(
+        self.start_button = ttk.Button(
             buttons_frame,
             text="▶  开始处理数据",
-            font=('SF Pro Display', 16, 'bold'),
-            bg=ThemeColors.ACCENT,
-            fg='white',
-            activebackground=ThemeColors.ACCENT_HOVER,
-            activeforeground='white',
-            relief='flat',
-            cursor='hand2',
-            padx=50,
-            pady=18,
+            style='Start.TButton',
             command=self._start_processing
         )
         self.start_button.pack(fill='x', pady=(0, 15))
@@ -745,7 +751,7 @@ class BulkProcessorGUI:
             return
         
         self.is_processing = True
-        self.start_button.config(state='disabled', bg=ThemeColors.TEXT_TERTIARY)
+        self.start_button.config(state='disabled')
         
         self.progress_indicator.start_animation()
         
@@ -802,7 +808,7 @@ class BulkProcessorGUI:
             self.root.after(0, lambda: self.log_viewer.add_log(error_detail, 'error'))
         finally:
             self.is_processing = False
-            self.root.after(0, lambda: self.start_button.config(state='normal', bg=ThemeColors.ACCENT))
+            self.root.after(0, lambda: self.start_button.config(state='normal'))
             self.root.after(0, lambda: self.progress_indicator.stop_animation())
     
     def _update_progress(self, message: str):
