@@ -78,6 +78,7 @@ class ModernStyle:
                        foreground=ThemeColors.TEXT_PRIMARY,
                        font=('SF Pro Text', 12))
         
+        # 主按钮样式
         style.configure('Start.TButton',
                        background=ThemeColors.ACCENT,
                        foreground='white',
@@ -159,16 +160,16 @@ class AnimatedProgressIndicator:
         """开始旋转动画"""
         self.is_animating = True
         self._animate()
-    
+        
     def stop_animation(self):
         """停止动画"""
         self.is_animating = False
-    
+        
     def _animate(self):
         """执行动画帧"""
         if not self.is_animating:
             return
-        
+            
         self.canvas.delete("all")
         
         for i in range(12):
@@ -196,15 +197,15 @@ class AnimatedProgressIndicator:
         self.angle = (self.angle + 10) % 360
         
         self.parent.after(50, self._animate)
-    
+        
     def _cos(self, angle):
         import math
         return math.cos(math.radians(angle))
-    
+        
     def _sin(self, angle):
         import math
         return math.sin(math.radians(angle))
-    
+        
     def _interpolate_color(self, color1, color2, factor):
         """颜色插值"""
         r1, g1, b1 = int(color1[1:3], 16), int(color1[3:5], 16), int(color1[5:7], 16)
@@ -410,7 +411,7 @@ class BulkProcessorGUI:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("亚马逊广告数据处理器")
-        self.root.geometry("900x900")
+        self.root.geometry("950x1000")
         self.root.configure(bg=ThemeColors.BG_PRIMARY)
         self.root.resizable(True, True)
         
@@ -440,24 +441,30 @@ class BulkProcessorGUI:
     def _create_widgets(self):
         """创建所有UI组件"""
         main_container = ttk.Frame(self.root, style='TFrame')
-        main_container.pack(fill='both', expand=True, padx=40, pady=40)
+        main_container.pack(fill='both', expand=True, padx=30, pady=30)
         
+        # 顶部标题区域
         self._create_header(main_container)
         
+        # 开始处理按钮（放最上面，确保可见）
+        self._create_action_buttons(main_container)
+        
+        # 文件选择
         self._create_file_selection_card(main_container)
         
+        # 配置参数
         self._create_config_card(main_container)
         
+        # 进度区域
         self._create_progress_section(main_container)
         
+        # 结果预览
         self._create_results_section(main_container)
-        
-        self._create_action_buttons(main_container)
     
     def _create_header(self, parent):
         """创建顶部标题区域"""
         header_frame = ttk.Frame(parent, style='TFrame')
-        header_frame.pack(fill='x', pady=(0, 30))
+        header_frame.pack(fill='x', pady=(0, 20))
         
         title = ttk.Label(
             header_frame,
@@ -472,6 +479,36 @@ class BulkProcessorGUI:
             style='Subtitle.TLabel'
         )
         subtitle.pack(anchor='w', pady=(8, 0))
+    
+    def _create_action_buttons(self, parent):
+        """创建操作按钮 - 放在最前面确保可见"""
+        buttons_frame = ttk.Frame(parent, style='TFrame')
+        buttons_frame.pack(fill='x', pady=(0, 25))
+        
+        self.start_button = ttk.Button(
+            buttons_frame,
+            text="▶  开始处理数据",
+            style='Start.TButton',
+            command=self._start_processing
+        )
+        self.start_button.pack(fill='x', pady=(0, 15))
+        
+        secondary_frame = ttk.Frame(buttons_frame, style='TFrame')
+        secondary_frame.pack(fill='x')
+        
+        ttk.Button(
+            secondary_frame,
+            text="打开输出文件夹",
+            style='Secondary.TButton',
+            command=self._open_output_folder
+        ).pack(side='left', padx=(0, 12))
+        
+        ttk.Button(
+            secondary_frame,
+            text="关闭",
+            style='Secondary.TButton',
+            command=self.root.quit
+        ).pack(side='left')
     
     def _create_file_selection_card(self, parent):
         """创建文件选择卡片"""
@@ -655,36 +692,6 @@ class BulkProcessorGUI:
             state='disabled'
         )
         self.result_text.pack(fill='x')
-    
-    def _create_action_buttons(self, parent):
-        """创建操作按钮"""
-        buttons_frame = ttk.Frame(parent, style='TFrame')
-        buttons_frame.pack(fill='x', pady=(20, 0))
-        
-        self.start_button = ttk.Button(
-            buttons_frame,
-            text="▶  开始处理数据",
-            style='Start.TButton',
-            command=self._start_processing
-        )
-        self.start_button.pack(fill='x', pady=(0, 15))
-        
-        secondary_frame = ttk.Frame(buttons_frame, style='TFrame')
-        secondary_frame.pack(fill='x')
-        
-        ttk.Button(
-            secondary_frame,
-            text="打开输出文件夹",
-            style='Secondary.TButton',
-            command=self._open_output_folder
-        ).pack(side='left', padx=(0, 12))
-        
-        ttk.Button(
-            secondary_frame,
-            text="关闭",
-            style='Secondary.TButton',
-            command=self.root.quit
-        ).pack(side='left')
     
     def _select_folder(self):
         """选择文件夹"""
