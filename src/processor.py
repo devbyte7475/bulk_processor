@@ -181,20 +181,20 @@ class BulkDataProcessor:
         if ad_type == "sp":
             expr_col = "Product Targeting Expression"
             if expr_col in df.columns:
-                df["asintarget"] = df[expr_col].str.split("=", n=1).str[0].str.title()
+                df["asintarget"] = df[expr_col].astype(str).str.split("=", n=1).str[0].str.title()
             col_list1 = ['SKU', 'Targeting Type', 'Match Type', 'Placement', 'asintarget']
             col_list2 = ['ASIN (Informational only)', 'Keyword Text', 
                         'Percentage', 'Resolved Product Targeting Expression (Informational only)']
         elif ad_type == "sb":
             expr_col = "Resolved Product Targeting Expression (Informational only)"
             if expr_col in df.columns:
-                df["asintarget_sb"] = df[expr_col].str.split("=", n=1).str[0].str.title()
+                df["asintarget_sb"] = df[expr_col].astype(str).str.split("=", n=1).str[0].str.title()
             col_list1 = ['Placement', 'Match Type', 'asintarget_sb']
             col_list2 = ['Keyword Text', 'Resolved Product Targeting Expression (Informational only)']
         else:
             expr_col = "Resolved Targeting Expression (Informational only)"
             if expr_col in df.columns:
-                df["asintarget_sd"] = df[expr_col].str.split("=", n=1).str[0].str.title()
+                df["asintarget_sd"] = df[expr_col].astype(str).str.split("=", n=1).str[0].str.title()
             col_list1 = ['SKU', 'Bid Optimization', 'asintarget_sd', 'Cost Type']
             col_list2 = ['ASIN (Informational only)', 'Resolved Targeting Expression (Informational only)']
         
