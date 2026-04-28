@@ -311,8 +311,12 @@ class BulkDataProcessor:
     
     def add_result_column_vectorized(self, df: pd.DataFrame) -> pd.DataFrame:
         """向量化添加结果列"""
-        df['结果列'] = df['曝光量'].astype(str) + df['点击率'].astype(str) + \
-                       df['转化率'].astype(str) + df['A_Cos'].astype(str)
+        df['结果列'] = (
+            df['曝光量'].fillna('').astype(str).replace('nan', '') + 
+            df['点击率'].fillna('').astype(str).replace('nan', '') + 
+            df['转化率'].fillna('').astype(str).replace('nan', '') + 
+            df['A_Cos'].fillna('').astype(str).replace('nan', '')
+        )
         return df
     
     def process(self, progress_callback: Callable = None) -> Dict[str, pd.DataFrame]:
@@ -370,7 +374,7 @@ class BulkDataProcessor:
             output_files = []
             for ad_type, df in results.items():
                 output_file = self.folder_path / f"bulk_{ad_type}_数据源表格.csv"
-                df.to_csv(output_file, index=False, encoding='utf-8-sig')
+                df.to_csv(output_file, index=False, encoding='utf-8-sig', na_rep='')
                 output_files.append(output_file)
             
             if progress_callback:
