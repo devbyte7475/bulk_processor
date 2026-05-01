@@ -1,6 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
 import sys
-import os
 
 block_cipher = None
 
@@ -8,15 +7,11 @@ a = Analysis(
     ['src/main.py'],
     pathex=[],
     binaries=[],
-    datas=[
-        ('assets/icon.ico', 'assets'),
-    ],
+    datas=[],
     hiddenimports=[
         'pandas',
         'numpy',
         'openpyxl',
-        'tkinter',
-        'tkinter.ttk',
     ],
     hookspath=[],
     hooksconfig={},
@@ -32,6 +27,7 @@ a = Analysis(
         'requests', 'urllib3',
         'flask', 'django', 'fastapi',
         'sqlalchemy', 'pymysql', 'psycopg2',
+        'tkinter', 'tkinter.ttk',
     ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
@@ -52,8 +48,7 @@ if sys.platform == 'darwin':
         bootloader_ignore_signals=False,
         strip=False,
         upx=True,
-        console=False,
-        icon='assets/icon.ico',
+        console=True,
     )
     coll = COLLECT(
         exe,
@@ -68,7 +63,6 @@ if sys.platform == 'darwin':
     app = BUNDLE(
         coll,
         name='bulk_processor.app',
-        icon='assets/icon.ico',
         bundle_identifier='com.bulkprocessor.app',
         version='1.5.0',
     )
@@ -83,8 +77,7 @@ else:
         bootloader_ignore_signals=False,
         strip=False,
         upx=True,
-        console=False,
-        icon='assets/icon.ico',
+        console=True,
     )
     coll = COLLECT(
         exe,
